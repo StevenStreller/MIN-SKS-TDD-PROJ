@@ -52,7 +52,7 @@ Services:
   liefern können.
 - [ ] Das System soll eine Buchung zurückweisen, wenn nicht mehr genügend Sitzplätze
   vorhanden sind.
-- [ ] Das System soll alle Kunden, Veranstaltungen und Buchungen persistent speichern.
+- [x] Das System soll alle Kunden, Veranstaltungen und Buchungen persistent speichern.
 
 Die Benutzungsschnittstelle müssen Sie überhaupt nicht implementieren, da Ihre Tests als
 Benutzer der Services auftreten werden.

@@ -29,30 +29,30 @@ Eine grobe Sammlung von Anforderungen:
 
 Domänenmodell:
 
-* Veranstaltung: Identifikator, Titel, Datum und Uhrzeit, Ticketpreis, insgesamt
+- [ ] Veranstaltung: Identifikator, Titel, Datum und Uhrzeit, Ticketpreis, insgesamt
   verfügbare Sitzplätze.
-* Findet eine Veranstaltung an mehreren Terminen statt, wird diese (um es hier nicht
+- [ ] Findet eine Veranstaltung an mehreren Terminen statt, wird diese (um es hier nicht
   zu kompliziert zu machen) mehrfach gepflegt.
-* Kunde: Name, Adresse. Der Name sei eindeutig.
-* Buchung: bezieht sich auf einen Kunden und eine Veranstaltung. Enthält die Anzahl
+- [x] Kunde: Name, Adresse. Der Name sei eindeutig.
+- [ ] Buchung: bezieht sich auf einen Kunden und eine Veranstaltung. Enthält die Anzahl
   der gebuchten Sitzplätze und einen Identifikator.
 
 Services:
 
-* Das System soll einen Kunden bzw. eine Veranstaltung mit vom Benutzer
+- [ ] Das System soll einen Kunden bzw. eine Veranstaltung mit vom Benutzer
   eingegebenen Daten erzeugen können.
-* Das System soll alle Veranstaltungen auflisten können.
-* Das System soll zu einer Veranstaltung die noch verfügbaren Sitzplätze zeigen.
-* Das System soll alle Kunden auflisten können.
-* Das System soll zu einem Kunden eine Buchung anlegen können.
-* Das System soll mehrere Buchungen desselben Kunden zur selben Veranstaltung
+- [ ] Das System soll alle Veranstaltungen auflisten können.
+- [ ] Das System soll zu einer Veranstaltung die noch verfügbaren Sitzplätze zeigen.
+- [x] Das System soll alle Kunden auflisten können.
+- [ ] Das System soll zu einem Kunden eine Buchung anlegen können. 
+- [ ] Das System soll mehrere Buchungen desselben Kunden zur selben Veranstaltung
   zu einer Buchung zusammenfassen. Der Identifikator der neueren Buchung wird
   dabei übernommen.
-* Das System soll zu einem Kunden und einer Veranstaltung die zugehörige Buchung
+- [ ] Das System soll zu einem Kunden und einer Veranstaltung die zugehörige Buchung
   liefern können.
-* Das System soll eine Buchung zurückweisen, wenn nicht mehr genügend Sitzplätze
+- [ ] Das System soll eine Buchung zurückweisen, wenn nicht mehr genügend Sitzplätze
   vorhanden sind.
-* Das System soll alle Kunden, Veranstaltungen und Buchungen persistent speichern.
+- [ ] Das System soll alle Kunden, Veranstaltungen und Buchungen persistent speichern.
 
 Die Benutzungsschnittstelle müssen Sie überhaupt nicht implementieren, da Ihre Tests als
 Benutzer der Services auftreten werden.
@@ -74,11 +74,11 @@ Abschnitt Session Export).
 Erweitern Sie Ihre Anwendung erneut in test-driven Manier um die folgenden Funktionen.
 Setzen Sie hierzu die Bibliothek mockito ein.
 
-* Eine Buchung wird zurückgewiesen, wenn der Kunde auf einer Blacklist steht, die über
+- [ ] Eine Buchung wird zurückgewiesen, wenn der Kunde auf einer Blacklist steht, die über
   einen im Internet verfügbaren Dienst abgefragt wird. Der Blacklist-Dienst nimmt den
   Namen entgegen und liefert true, falls der Kunde auf der Blacklist steht, sonst false.
   Realisieren Sie die Blacklist als Test Stub mit mockito.
-* Einzelbuchungen über mindestens 10% aller Sitzplätze in der jeweiligen Veranstaltung
+- [ ] Einzelbuchungen über mindestens 10% aller Sitzplätze in der jeweiligen Veranstaltung
   werden (bei erfolgreicher Annahme) direkt zur Information an den Veranstalter per E-Mail weitergeleitet. Die
   Veranstaltung wird dazu um eine E-Mail-Adresse des
   Veranstalters erweitert. Testen Sie den E-Mail-Versand durch ein Mock-Objekt.

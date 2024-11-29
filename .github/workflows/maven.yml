@@ -34,3 +34,20 @@ jobs:
           cache: maven
       - name: Test with Maven
         run: mvn -B test --file pom.xml
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create ZIP of source code
+        run: |
+          cp target/site/jacoco/index.html test_report.html
+          zip -r source-code.zip .
+
+      - name: Upload ZIP as release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: source-code.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub Token für das Hochladen

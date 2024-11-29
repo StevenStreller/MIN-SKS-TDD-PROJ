@@ -162,5 +162,33 @@ class CustomerServiceTest {
         assertTrue(deserializedCustomers.contains(newCustomer), "Deserialized list should contain Alice Wonderland");
     }
 
+    @Test
+    void serializeCustomersThrowsRuntimeExceptionOnIOException() {
+        // Create a file that is not writable, e.g., a read-only file.
+        String filename = "customers.ser";
+        File file = new File(filename);
+
+        try {
+            if (file.exists()) file.delete();
+            file.createNewFile();
+
+            // Make the file read-only to simulate an IOException during serialization
+            file.setReadOnly();
+
+            RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+                customerService.serializeCustomers(filename);
+            });
+
+            assertEquals("Serialisierung fehlgeschlagen", exception.getMessage(), "Expected RuntimeException with message 'Serialisierung fehlgeschlagen'");
+
+        } catch (IOException e) {
+            fail("Failed to create or modify file: " + e.getMessage());
+        } finally {
+            // Clean up: Make the file writable again and delete
+            file.setWritable(true);
+            file.delete();
+        }
+    }
+
 
 }

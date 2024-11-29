@@ -163,4 +163,32 @@ class EventServiceTest {
         assertTrue(deserializedEvents.contains(newEvent), "Deserialized list should contain the new event");
     }
 
+    @Test
+    void serializeEventsThrowsRuntimeExceptionOnIOException() {
+        // Create a file that is not writable, e.g., a read-only file.
+        String filename = "events.ser";
+        File file = new File(filename);
+
+        try {
+            if (file.exists()) file.delete();
+            file.createNewFile();
+
+            // Make the file read-only to simulate an IOException during serialization
+            file.setReadOnly();
+
+            RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+                eventService.serializeEvents(filename);
+            });
+
+            assertEquals("Serialisierung fehlgeschlagen", exception.getMessage(), "Expected RuntimeException with message 'Serialisierung fehlgeschlagen'");
+
+        } catch (IOException e) {
+            fail("Failed to create or modify file: " + e.getMessage());
+        } finally {
+            // Clean up: Make the file writable again and delete
+            file.setWritable(true);
+            file.delete();
+        }
+    }
+
 }

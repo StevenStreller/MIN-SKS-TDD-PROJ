@@ -1,8 +1,9 @@
 package de.hsh.dto;
 
+import java.io.Serializable;
 import java.util.UUID;
 
-public record Reservation(UUID uuid, Event event, Customer customer, int reservedSeats) {
+public record Reservation(UUID uuid, Event event, Customer customer, int reservedSeats) implements Serializable {
     public Reservation {
         if (uuid == null) throw new IllegalArgumentException("UUID darf nicht null sein");
 

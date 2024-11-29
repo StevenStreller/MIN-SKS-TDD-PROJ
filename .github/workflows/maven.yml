@@ -43,10 +43,14 @@ jobs:
       - name: Create ZIP of source code
         run: |
           zip -r source-code.zip .
-
+      - name: Create Git tag with date and time
+        run: |
+          TAG=$(date +'%Y-%m-%d-%H%M')  # Tag im Format YYYY-MM-DD-HHMM
+          git tag "$TAG"  # Tag erstellen
+          git push origin "$TAG"  # Push Tag ins Repository
       - name: Upload ZIP as release asset
         uses: softprops/action-gh-release@v1
         with:
           files: source-code.zip
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub Token für das Hochladen
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

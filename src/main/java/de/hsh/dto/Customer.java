@@ -1,6 +1,8 @@
 package de.hsh.dto;
 
-public record Customer(String name, String address) {
+import java.io.Serializable;
+
+public record Customer(String name, String address) implements Serializable {
 
     public Customer {
         if (name == null) {

@@ -42,7 +42,6 @@ jobs:
       - uses: actions/checkout@v4
       - name: Create ZIP of source code
         run: |
-          cp target/site/jacoco/index.html test_report.html
           zip -r source-code.zip .
 
       - name: Upload ZIP as release asset

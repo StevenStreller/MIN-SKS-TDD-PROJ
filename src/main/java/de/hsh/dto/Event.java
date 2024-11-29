@@ -1,9 +1,10 @@
 package de.hsh.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public record Event(UUID identifier, String title, Date date, double price, int availableSeats) {
+public record Event(UUID identifier, String title, Date date, double price, int availableSeats) implements Serializable {
 
     public Event {
         if (price < 0) {

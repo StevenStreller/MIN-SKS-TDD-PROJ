@@ -27,6 +27,16 @@ public class ReservationService {
         reservations.add(reservation);
     }
 
+    public int getAvailableSeats(Event event) {
+        // Berechne die Summe der reservierten Plätze für das Event
+        int reservedSeats = reservations.stream()
+                .filter(reservation -> reservation.event().equals(event))
+                .mapToInt(Reservation::reservedSeats)
+                .sum();
+
+        return event.totalSeats() - reservedSeats;
+    }
+
     public List<Reservation> getReservations() {
         return reservations;
     }

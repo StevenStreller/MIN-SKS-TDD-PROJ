@@ -31,6 +31,36 @@ class ReservationServiceTest {
     }
 
     @Test
+    void getAvailableSeatsNoReservations() {
+        // Keine Reservierungen, daher sollte die Anzahl der verfügbaren Plätze 100 sein
+        int availableSeats = reservationService.getAvailableSeats(event);
+        assertEquals(100, availableSeats, "Die verfügbaren Plätze sollten 100 sein, wenn keine Reservierungen existieren.");
+    }
+
+    @Test
+    void getAvailableSeatsWithReservations() {
+        // Füge einige Reservierungen hinzu
+        reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer1, 30));
+        reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer2, 21));
+
+        // Die Summe der reservierten Plätze ist 30 + 21 = 51
+        int availableSeats = reservationService.getAvailableSeats(event);
+        assertEquals(49, availableSeats, "Die verfügbaren Plätze sollten 49 sein, wenn 30 und 21 Plätze reserviert sind.");
+    }
+
+    @Test
+    void getAvailableSeatsNoExcessReservations() {
+        // Füge Reservierungen hinzu, die die Gesamtzahl der Plätze nicht überschreiten
+        reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer1, 40));
+        reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer2, 40));
+
+        // Die Summe der reservierten Plätze ist 40 + 40 = 80, was weniger als die verfügbaren 100 Plätze ist
+        int availableSeats = reservationService.getAvailableSeats(event);
+        assertEquals(20, availableSeats, "Die verfügbaren Plätze sollten 20 sein, wenn 40 und 40 Plätze reserviert sind.");
+    }
+
+
+    @Test
     void addAndGetReservation() {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
 

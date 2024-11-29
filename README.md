@@ -42,7 +42,7 @@ Services:
 - [x] Das System soll einen Kunden bzw. eine Veranstaltung mit vom Benutzer
   eingegebenen Daten erzeugen können.
 - [x] Das System soll alle Veranstaltungen auflisten können.
-- [ ] Das System soll zu einer Veranstaltung die noch verfügbaren Sitzplätze zeigen.
+- [x] Das System soll zu einer Veranstaltung die noch verfügbaren Sitzplätze zeigen.
 - [x] Das System soll alle Kunden auflisten können.
 - [ ] Das System soll zu einem Kunden eine Buchung anlegen können. 
 - [ ] Das System soll mehrere Buchungen desselben Kunden zur selben Veranstaltung

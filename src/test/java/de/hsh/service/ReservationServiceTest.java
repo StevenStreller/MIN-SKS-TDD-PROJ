@@ -12,10 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class ReservationServiceTest {
 
     private ReservationService reservationService;
+    private BlacklistService blacklistServiceMock;
     private Customer customer1;
     private Customer customer2;
     private Event event;
@@ -23,11 +26,29 @@ class ReservationServiceTest {
 
     @BeforeEach
     void setUp() {
-        reservationService = new ReservationService();
+        blacklistServiceMock = mock(BlacklistService.class);
+
+        reservationService = new ReservationService(blacklistServiceMock);
         customer1 = new Customer("Max Mustermann", "Musterstraße 1");
         customer2 = new Customer("Anna Müller", "Beispielstraße 2");
         event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100);
         reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+    }
+
+    @Test
+    void testAddReservationWithBlacklistedCustomer() {
+        // Setze das Verhalten des Mock-Blacklist-Dienstes
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(true);
+
+        // Versuche, eine Buchung für einen blacklisted Kunden hinzuzufügen
+        Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+
+        // Überprüfe, ob die erwartete Exception geworfen wird
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            reservationService.addReservation(reservation);
+        });
+
+        assertEquals("Der Kunde befindet sich auf einer Blacklist und kann deshalb keine Buchung durchführen.", exception.getMessage());
     }
 
     @Test
@@ -122,6 +143,8 @@ class ReservationServiceTest {
 
     @Test
     void serializationAndDeserialization() {
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
         // Add reservation to the list
         reservationService.addReservation(reservation);
 
@@ -130,7 +153,7 @@ class ReservationServiceTest {
         reservationService.serializeReservations(filename);
 
         // Create a new ReservationService and deserialize the list
-        ReservationService newReservationService = new ReservationService();
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Check that the deserialized list contains the same reservations
@@ -141,12 +164,14 @@ class ReservationServiceTest {
 
     @Test
     void serializationWithEmptyList() {
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
         // Serialize an empty list
         String filename = "empty_reservations.ser";
         reservationService.serializeReservations(filename);
 
         // Deserialize into a new service
-        ReservationService newReservationService = new ReservationService();
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Assert the list is still empty after deserialization
@@ -155,13 +180,15 @@ class ReservationServiceTest {
 
     @Test
     void serializationWithOneReservation() {
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
         // Add a single reservation and serialize the list
         reservationService.addReservation(reservation);
         String filename = "single_reservation.ser";
         reservationService.serializeReservations(filename);
 
         // Create a new ReservationService and deserialize
-        ReservationService newReservationService = new ReservationService();
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Assert the deserialized list contains one reservation
@@ -172,8 +199,10 @@ class ReservationServiceTest {
 
     @Test
     void deserializationFileNotFound() {
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
         String filename = "non_existent_file.ser";
-        ReservationService newReservationService = new ReservationService();
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> newReservationService.deserializeReservations(filename));
         assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file does not exist");
@@ -181,6 +210,8 @@ class ReservationServiceTest {
 
     @Test
     void deserializationWithCorruptedFile() {
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
         String filename = "corrupted_reservations.ser";
         File file = new File(filename);
 
@@ -193,7 +224,7 @@ class ReservationServiceTest {
                 writer.write("Invalid data");
             }
 
-            ReservationService newReservationService = new ReservationService();
+            ReservationService newReservationService = new ReservationService(blacklistServiceMock);
 
             RuntimeException exception = assertThrows(RuntimeException.class, () -> newReservationService.deserializeReservations(filename));
             assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file is corrupted");
@@ -204,6 +235,8 @@ class ReservationServiceTest {
 
     @Test
     void serializationAndDeserializationWithDifferentReservationData() {
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
         Reservation newReservation = new Reservation(UUID.randomUUID(), event, customer1, 20);
 
         // Serialize the new reservation
@@ -212,7 +245,7 @@ class ReservationServiceTest {
         reservationService.serializeReservations(filename);
 
         // Create a new ReservationService and deserialize
-        ReservationService newReservationService = new ReservationService();
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Assert that the new reservation is in the deserialized list

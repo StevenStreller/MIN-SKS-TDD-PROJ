@@ -74,14 +74,13 @@ Abschnitt Session Export).
 Erweitern Sie Ihre Anwendung erneut in test-driven Manier um die folgenden Funktionen.
 Setzen Sie hierzu die Bibliothek mockito ein.
 
-- [ ] Eine Buchung wird zurückgewiesen, wenn der Kunde auf einer Blacklist steht, die über
+- [x] Eine Buchung wird zurückgewiesen, wenn der Kunde auf einer Blacklist steht, die über
   einen im Internet verfügbaren Dienst abgefragt wird. Der Blacklist-Dienst nimmt den
   Namen entgegen und liefert true, falls der Kunde auf der Blacklist steht, sonst false.
   Realisieren Sie die Blacklist als Test Stub mit mockito.
 - [ ] Einzelbuchungen über mindestens 10% aller Sitzplätze in der jeweiligen Veranstaltung
   werden (bei erfolgreicher Annahme) direkt zur Information an den Veranstalter per E-Mail weitergeleitet. Die
-  Veranstaltung wird dazu um eine E-Mail-Adresse des
-  Veranstalters erweitert. Testen Sie den E-Mail-Versand durch ein Mock-Objekt.
+  Veranstaltung wird dazu um eine E-Mail-Adresse des Veranstalters erweitert. Testen Sie den E-Mail-Versand durch ein Mock-Objekt.
 
 ## 1.d Anforderungen beim Präsentationstermin
 

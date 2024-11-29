@@ -11,8 +11,16 @@ import java.util.List;
 public class ReservationService {
 
     private final List<Reservation> reservations = new ArrayList<>();
+    private final BlacklistService blacklistService;
+    public ReservationService(BlacklistService blacklistService) {
+        this.blacklistService = blacklistService;
+    }
 
     public void addReservation(Reservation reservation) {
+        if (blacklistService.isBlacklisted(reservation.customer().name())) {
+            throw new IllegalArgumentException("Der Kunde befindet sich auf einer Blacklist und kann deshalb keine Buchung durchführen.");
+        }
+
         int totalReservedSeats = reservations.stream()
                 .filter(r -> r.event().equals(reservation.event()))
                 .mapToInt(Reservation::reservedSeats)

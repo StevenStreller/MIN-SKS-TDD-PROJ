@@ -33,6 +33,11 @@ class CustomerServiceTest {
         List<Customer> customers = customerService.getCustomers();
         assertFalse(customers.isEmpty(), "Customer list should not be empty after adding a customer");
         assertTrue(customers.contains(customer), "Customer should be present in the list after adding");
+
+        Customer customer2 = new Customer("Jane Doe", "5678 Oak Avenue");
+        customerService.addCustomer(customer2);
+        assertTrue(customers.contains(customer2), "Der zweite Kunde sollte in der Liste enthalten sein");
+
     }
 
     @Test

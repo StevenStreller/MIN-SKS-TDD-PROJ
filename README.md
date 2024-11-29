@@ -29,26 +29,26 @@ Eine grobe Sammlung von Anforderungen:
 
 Domänenmodell:
 
-- [ ] Veranstaltung: Identifikator, Titel, Datum und Uhrzeit, Ticketpreis, insgesamt
+- [x] Veranstaltung: Identifikator, Titel, Datum und Uhrzeit, Ticketpreis, insgesamt
   verfügbare Sitzplätze.
 - [ ] Findet eine Veranstaltung an mehreren Terminen statt, wird diese (um es hier nicht
   zu kompliziert zu machen) mehrfach gepflegt.
 - [x] Kunde: Name, Adresse. Der Name sei eindeutig.
-- [ ] Buchung: bezieht sich auf einen Kunden und eine Veranstaltung. Enthält die Anzahl
+- [x] Buchung: bezieht sich auf einen Kunden und eine Veranstaltung. Enthält die Anzahl
   der gebuchten Sitzplätze und einen Identifikator.
 
 Services:
 
-- [ ] Das System soll einen Kunden bzw. eine Veranstaltung mit vom Benutzer
+- [x] Das System soll einen Kunden bzw. eine Veranstaltung mit vom Benutzer
   eingegebenen Daten erzeugen können.
-- [ ] Das System soll alle Veranstaltungen auflisten können.
+- [x] Das System soll alle Veranstaltungen auflisten können.
 - [ ] Das System soll zu einer Veranstaltung die noch verfügbaren Sitzplätze zeigen.
 - [x] Das System soll alle Kunden auflisten können.
 - [ ] Das System soll zu einem Kunden eine Buchung anlegen können. 
 - [ ] Das System soll mehrere Buchungen desselben Kunden zur selben Veranstaltung
   zu einer Buchung zusammenfassen. Der Identifikator der neueren Buchung wird
   dabei übernommen.
-- [ ] Das System soll zu einem Kunden und einer Veranstaltung die zugehörige Buchung
+- [x] Das System soll zu einem Kunden und einer Veranstaltung die zugehörige Buchung
   liefern können.
 - [ ] Das System soll eine Buchung zurückweisen, wenn nicht mehr genügend Sitzplätze
   vorhanden sind.

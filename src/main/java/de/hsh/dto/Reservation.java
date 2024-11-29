@@ -13,7 +13,7 @@ public record Reservation(UUID uuid, Event event, Customer customer, int reserve
 
         if (reservedSeats <= 0) throw new IllegalArgumentException("Reservierte Plätze müssen größer als null sein");
 
-        if (reservedSeats > event.availableSeats())
+        if (reservedSeats > event.totalSeats())
             throw new IllegalArgumentException("Reservierte Plätze dürfen nicht größer als verfügbare Sitzplatzanzahl sein.");
     }
 }

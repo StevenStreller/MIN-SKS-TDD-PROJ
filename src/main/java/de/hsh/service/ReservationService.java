@@ -20,7 +20,7 @@ public class ReservationService {
 
         totalReservedSeats += reservation.reservedSeats();
 
-        if (totalReservedSeats > reservation.event().availableSeats()) {
+        if (totalReservedSeats > reservation.event().totalSeats()) {
             throw new IllegalArgumentException("Die Gesamtzahl der reservierten Plätze überschreitet die verfügbaren Plätze.");
         }
 

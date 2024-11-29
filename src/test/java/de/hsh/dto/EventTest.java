@@ -10,32 +10,32 @@ import static org.junit.jupiter.api.Assertions.*;
 class EventTest {
 
     @Test
-    public void availableSeats() {
+    public void totalSeats() {
         int expectedSeats = 50;
         Event event = new Event(UUID.randomUUID(), "Test Event", new Date(), 100.0, expectedSeats);
 
-        assertEquals(expectedSeats, event.availableSeats(), "Die verfügbaren Plätze sollten korrekt zurückgegeben werden.");
+        assertEquals(expectedSeats, event.totalSeats(), "Die verfügbaren Plätze sollten korrekt zurückgegeben werden.");
     }
 
     @Test
-    public void availableSeatsWithDifferentValues() {
+    public void totalSeatsWithDifferentValues() {
         Event event1 = new Event(UUID.randomUUID(), "Event 1", new Date(), 100.0, 30);
         Event event2 = new Event(UUID.randomUUID(), "Event 2", new Date(), 120.0, 75);
 
-        assertEquals(30, event1.availableSeats(), "Das erste Event sollte 30 verfügbare Plätze haben.");
-        assertEquals(75, event2.availableSeats(), "Das zweite Event sollte 75 verfügbare Plätze haben.");
+        assertEquals(30, event1.totalSeats(), "Das erste Event sollte 30 verfügbare Plätze haben.");
+        assertEquals(75, event2.totalSeats(), "Das zweite Event sollte 75 verfügbare Plätze haben.");
     }
 
     @Test
-    public void availableSeatsZero() {
+    public void totalSeatsZero() {
         Event event = new Event(UUID.randomUUID(), "Event No Seats", new Date(), 50.0, 0);
 
-        assertEquals(0, event.availableSeats(), "Das Event sollte 0 verfügbare Plätze haben.");
+        assertEquals(0, event.totalSeats(), "Das Event sollte 0 verfügbare Plätze haben.");
     }
 
 
     @Test
-    public void availableSeatsCannotBeNegative() {
+    public void totalSeatsCannotBeNegative() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Event(UUID.randomUUID(), "Test Event", new Date(), 100.0, -5));
         assertEquals("Die verfügbaren Plätze dürfen nicht negativ sein.", exception.getMessage());
     }

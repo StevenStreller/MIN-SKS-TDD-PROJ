@@ -43,6 +43,21 @@ class ReservationServiceTest {
     }
 
     @Test
+    void addReservationFailsWhenTooManySeatsReserved() {
+        // Erste Reservierung: 50 Plätze
+        Reservation reservation1 = new Reservation(UUID.randomUUID(), event, customer1, 50);
+        reservationService.addReservation(reservation1);
+
+        // Zweite Reservierung: 60 Plätze - Sollte fehlschlagen, da die Gesamtzahl die verfügbaren Plätze überschreitet (100)
+        Reservation reservation2 = new Reservation(UUID.randomUUID(), event, customer2, 60);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> reservationService.addReservation(reservation2));
+
+        assertEquals("Die Gesamtzahl der reservierten Plätze überschreitet die verfügbaren Plätze.", exception.getMessage());
+    }
+
+
+    @Test
     void getReservationNotFound() {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
         reservationService.addReservation(reservation);

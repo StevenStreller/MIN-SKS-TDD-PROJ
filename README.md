@@ -50,7 +50,7 @@ Services:
   dabei übernommen.
 - [x] Das System soll zu einem Kunden und einer Veranstaltung die zugehörige Buchung
   liefern können.
-- [ ] Das System soll eine Buchung zurückweisen, wenn nicht mehr genügend Sitzplätze
+- [x] Das System soll eine Buchung zurückweisen, wenn nicht mehr genügend Sitzplätze
   vorhanden sind.
 - [x] Das System soll alle Kunden, Veranstaltungen und Buchungen persistent speichern.
 
@@ -65,7 +65,7 @@ Datei an.
 
 ## 1.b Testabdeckung
 
-Fertigen Sie schließlich mit EclEmma einen Bericht über die erreichte Codeabdeckung an
+- [x] Fertigen Sie schließlich mit EclEmma einen Bericht über die erreichte Codeabdeckung an
 (Anleitung: [http://www.eclemma.org/userdoc/importexport.html](http://www.eclemma.org/userdoc/importexport.html) -
 Abschnitt Session Export).
 

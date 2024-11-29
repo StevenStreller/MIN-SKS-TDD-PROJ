@@ -13,6 +13,17 @@ public class ReservationService {
     private final List<Reservation> reservations = new ArrayList<>();
 
     public void addReservation(Reservation reservation) {
+        int totalReservedSeats = reservations.stream()
+                .filter(r -> r.event().equals(reservation.event()))
+                .mapToInt(Reservation::reservedSeats)
+                .sum();
+
+        totalReservedSeats += reservation.reservedSeats();
+
+        if (totalReservedSeats > reservation.event().availableSeats()) {
+            throw new IllegalArgumentException("Die Gesamtzahl der reservierten Plätze überschreitet die verfügbaren Plätze.");
+        }
+
         reservations.add(reservation);
     }
 

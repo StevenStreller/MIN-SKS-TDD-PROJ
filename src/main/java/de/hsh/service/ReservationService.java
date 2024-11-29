@@ -12,8 +12,11 @@ public class ReservationService {
 
     private final List<Reservation> reservations = new ArrayList<>();
     private final BlacklistService blacklistService;
-    public ReservationService(BlacklistService blacklistService) {
+    private final EmailService emailService;
+
+    public ReservationService(BlacklistService blacklistService, EmailService emailService) {
         this.blacklistService = blacklistService;
+        this.emailService = emailService;
     }
 
     public void addReservation(Reservation reservation) {
@@ -30,6 +33,13 @@ public class ReservationService {
 
         if (totalReservedSeats > reservation.event().totalSeats()) {
             throw new IllegalArgumentException("Die Gesamtzahl der reservierten Plätze überschreitet die verfügbaren Plätze.");
+        }
+
+        if (reservation.reservedSeats() >= (reservation.event().totalSeats() * 0.1)) {
+            String email = reservation.event().organizerEmail();
+            String subject = "Buchung für " + reservation.event().title() + " bestätigt";
+            String message = "Es wurden " + reservation.reservedSeats() + " Plätze für die Veranstaltung " + reservation.event().title() + " reserviert.";
+            emailService.sendEmail(email, subject, message);
         }
 
         reservations.add(reservation);

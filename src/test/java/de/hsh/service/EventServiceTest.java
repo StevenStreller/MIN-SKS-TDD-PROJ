@@ -21,8 +21,8 @@ class EventServiceTest {
     @BeforeEach
     void setUp() {
         eventService = new EventService();
-        event1 = new Event(UUID.randomUUID(), "Konzert 1", new Date(), 50.0, 100);
-        event2 = new Event(UUID.randomUUID(), "Konzert 2", new Date(), 60.0, 150);
+        event1 = new Event(UUID.randomUUID(), "Konzert 1", new Date(), 50.0, 100, "organizer@mail.com");
+        event2 = new Event(UUID.randomUUID(), "Konzert 2", new Date(), 60.0, 150, "organizer@mail.com");
     }
 
     @Test
@@ -32,7 +32,7 @@ class EventServiceTest {
 
     @Test
     public void addEventSuccessfully() {
-        Event event = new Event(UUID.randomUUID(), "Test Event", new Date(), 100.0, 50);
+        Event event = new Event(UUID.randomUUID(), "Test Event", new Date(), 100.0, 50, "organizer@mail.com");
         eventService.addEvent(event);
 
         assertFalse(eventService.getEvents().isEmpty(), "Die Event-Liste sollte nach dem Hinzufügen eines Events nicht leer sein.");
@@ -41,8 +41,8 @@ class EventServiceTest {
 
     @Test
     public void addEventWhenListContainsNoMatchingEvent() {
-        Event event1 = new Event(UUID.randomUUID(), "Test Event 1", new Date(), 100.0, 50);
-        Event event2 = new Event(UUID.randomUUID(), "Test Event 2", new Date(), 150.0, 30);
+        Event event1 = new Event(UUID.randomUUID(), "Test Event 1", new Date(), 100.0, 50, "organizer@mail.com");
+        Event event2 = new Event(UUID.randomUUID(), "Test Event 2", new Date(), 150.0, 30, "organizer@mail.com");
         eventService.addEvent(event1);
 
         assertFalse(eventService.getEvents().contains(event2), "Die Event-Liste sollte das Event nicht enthalten, das nicht hinzugefügt wurde.");
@@ -50,8 +50,8 @@ class EventServiceTest {
 
     @Test
     public void addMultipleEvents() {
-        Event event1 = new Event(UUID.randomUUID(), "Test Event 1", new Date(), 100.0, 50);
-        Event event2 = new Event(UUID.randomUUID(), "Test Event 2", new Date(), 150.0, 30);
+        Event event1 = new Event(UUID.randomUUID(), "Test Event 1", new Date(), 100.0, 50, "organizer@mail.com");
+        Event event2 = new Event(UUID.randomUUID(), "Test Event 2", new Date(), 150.0, 30, "organizer@mail.com");
         eventService.addEvent(event1);
         eventService.addEvent(event2);
 
@@ -146,7 +146,7 @@ class EventServiceTest {
 
     @Test
     void serializationAndDeserializationWithDifferentEventData() {
-        Event newEvent = new Event(UUID.randomUUID(), "Festival", new Date(), 80.0, 500);
+        Event newEvent = new Event(UUID.randomUUID(), "Festival", new Date(), 80.0, 500, "organizer@mail.com");
 
         // Serialize the new event
         String filename = "new_event.ser";

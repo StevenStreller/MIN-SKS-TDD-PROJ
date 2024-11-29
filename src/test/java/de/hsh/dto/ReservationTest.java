@@ -12,7 +12,7 @@ class ReservationTest {
     @Test
     void validReservation() {
         Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
-        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100);
+        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100, "organizer@mail.com");
         UUID reservationUUID = UUID.randomUUID();
 
         Reservation reservation = new Reservation(reservationUUID, event, customer, 10);
@@ -27,7 +27,7 @@ class ReservationTest {
     @Test
     void reservationWithNullUUID() {
         Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
-        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100);
+        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100, "organizer@mail.com");
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
                 new Reservation(null, event, customer, 10)
@@ -48,7 +48,7 @@ class ReservationTest {
 
     @Test
     void reservationWithNullCustomer() {
-        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100);
+        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100, "organizer@mail.com");
         UUID reservationUUID = UUID.randomUUID();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -60,7 +60,7 @@ class ReservationTest {
     @Test
     void reservationWithZeroReservedSeats() {
         Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
-        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100);
+        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100, "organizer@mail.com");
         UUID reservationUUID = UUID.randomUUID();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
@@ -72,7 +72,7 @@ class ReservationTest {
     @Test
     void reservationWithTooManyReservedSeats() {
         Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
-        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100);
+        Event event = new Event(UUID.randomUUID(), "Konzert", new Date(), 50.0, 100, "organizer@mail.com");
         UUID reservationUUID = UUID.randomUUID();
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->

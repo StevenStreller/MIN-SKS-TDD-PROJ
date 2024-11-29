@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.UUID;
 
-public record Event(UUID identifier, String title, Date date, double price, int totalSeats) implements Serializable {
+public record Event(UUID identifier, String title, Date date, double price, int totalSeats, String organizerEmail) implements Serializable {
 
     public Event {
         if (price < 0) {

@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ReservationServiceTest {
 
     private ReservationService reservationService;
     private BlacklistService blacklistServiceMock;
+    private EmailService emailServiceMock;
     private Customer customer1;
     private Customer customer2;
     private Event event;
@@ -27,12 +27,48 @@ class ReservationServiceTest {
     @BeforeEach
     void setUp() {
         blacklistServiceMock = mock(BlacklistService.class);
+        emailServiceMock = mock(EmailService.class);
 
-        reservationService = new ReservationService(blacklistServiceMock);
+        reservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
         customer1 = new Customer("Max Mustermann", "Musterstraße 1");
         customer2 = new Customer("Anna Müller", "Beispielstraße 2");
-        event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100);
+        event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
         reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+    }
+
+    @Test
+    void testEmailSentWhenMoreThan10PercentOfSeatsReserved() {
+        // Angenommen, die Veranstaltung hat 100 Plätze und wir reservieren 20 Plätze
+        Event event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
+        event = new Event(event.identifier(), event.title(), event.date(), event.price(), event.totalSeats(), "organizer@mail.com");
+
+
+        // Erstellung der Reservierung
+        Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
+        Reservation reservation = new Reservation(UUID.randomUUID(), event, customer, 20);
+
+        // Führen der Methode aus, die die E-Mail versendet
+        reservationService.addReservation(reservation);
+
+        // Überprüfen, ob die sendEmail-Methode des E-Mail-Dienstes aufgerufen wurde
+        verify(emailServiceMock, times(1)).sendEmail(eq("organizer@mail.com"), eq("Buchung für Konzert bestätigt"),
+                eq("Es wurden 20 Plätze für die Veranstaltung Konzert reserviert."));
+    }
+
+    @Test
+    void testNoEmailSentWhenLessThan10PercentOfSeatsReserved() {
+        // Angenommen, die Veranstaltung hat 100 Plätze und wir reservieren nur 5 Plätze (weniger als 10%)
+        Event event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
+
+        // Erstellung der Reservierung
+        Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
+        Reservation reservation = new Reservation(UUID.randomUUID(), event, customer, 5);
+
+        // Führen der Methode aus, die die E-Mail versendet
+        reservationService.addReservation(reservation);
+
+        // Überprüfen, dass keine E-Mail versendet wird, weil die Reservierung weniger als 10% der Plätze ausmacht
+        verify(emailServiceMock, never()).sendEmail(anyString(), anyString(), anyString());
     }
 
     @Test
@@ -123,7 +159,7 @@ class ReservationServiceTest {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
         reservationService.addReservation(reservation);
 
-        Event anotherEvent = new Event(UUID.randomUUID(), "Anderes Konzert", new java.util.Date(), 50.0, 100);
+        Event anotherEvent = new Event(UUID.randomUUID(), "Anderes Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
         Reservation retrievedReservation = reservationService.getReservation(anotherEvent, customer1);
 
         assertNull(retrievedReservation);
@@ -134,7 +170,7 @@ class ReservationServiceTest {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
         reservationService.addReservation(reservation);
 
-        Event nonExistingEvent = new Event(UUID.randomUUID(), "Anderes Konzert", new java.util.Date(), 50.0, 100);
+        Event nonExistingEvent = new Event(UUID.randomUUID(), "Anderes Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
         Customer nonExistingCustomer = new Customer("John Doe", "Unbekannte Straße");
         Reservation retrievedReservation = reservationService.getReservation(nonExistingEvent, nonExistingCustomer);
 
@@ -153,7 +189,7 @@ class ReservationServiceTest {
         reservationService.serializeReservations(filename);
 
         // Create a new ReservationService and deserialize the list
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Check that the deserialized list contains the same reservations
@@ -171,7 +207,7 @@ class ReservationServiceTest {
         reservationService.serializeReservations(filename);
 
         // Deserialize into a new service
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Assert the list is still empty after deserialization
@@ -188,7 +224,7 @@ class ReservationServiceTest {
         reservationService.serializeReservations(filename);
 
         // Create a new ReservationService and deserialize
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Assert the deserialized list contains one reservation
@@ -202,7 +238,7 @@ class ReservationServiceTest {
         when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
 
         String filename = "non_existent_file.ser";
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> newReservationService.deserializeReservations(filename));
         assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file does not exist");
@@ -224,7 +260,7 @@ class ReservationServiceTest {
                 writer.write("Invalid data");
             }
 
-            ReservationService newReservationService = new ReservationService(blacklistServiceMock);
+            ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
 
             RuntimeException exception = assertThrows(RuntimeException.class, () -> newReservationService.deserializeReservations(filename));
             assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file is corrupted");
@@ -245,7 +281,7 @@ class ReservationServiceTest {
         reservationService.serializeReservations(filename);
 
         // Create a new ReservationService and deserialize
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock);
+        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
         newReservationService.deserializeReservations(filename);
 
         // Assert that the new reservation is in the deserialized list

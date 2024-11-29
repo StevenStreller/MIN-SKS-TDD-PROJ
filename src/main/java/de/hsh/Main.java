@@ -14,7 +14,7 @@ public class Main {
     public static void init() {
         CustomerService customerService = new CustomerService();
         EventService eventService = new EventService();
-        ReservationService reservationService = new ReservationService(_ -> false);
+        ReservationService reservationService = new ReservationService(_ -> false, (to, subject, message) -> System.out.println("Mail verschickt"));
 
     }
 }

@@ -7,11 +7,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -115,39 +119,31 @@ class ReservationServiceTest {
     }
 
 
-    @Test
-    void emailSentWhenMoreThan10PercentOfSeatsReserved() {
-        // Angenommen, die Veranstaltung hat 100 Plätze und wir reservieren 20 Plätze
-        Event event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
-        event = new Event(event.identifier(), event.title(), event.date(), event.price(), event.totalSeats(), "organizer@mail.com");
-
-
-        // Erstellung der Reservierung
-        Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
-        Reservation reservation = new Reservation(UUID.randomUUID(), event, customer, 20);
-
-        // Führen der Methode aus, die die E-Mail versendet
+    @ParameterizedTest
+    @MethodSource("provideReservationsForEmailSending")
+    @DisplayName("Test: E-Mail wird gesendet, wenn mehr als 10% der Plätze reserviert sind")
+    void testEmailSendingBasedOnSeatsReserved(Event event, Customer customer, Reservation reservation, boolean shouldSendEmail) {
         reservationService.addReservation(reservation);
 
-        // Überprüfen, ob die sendEmail-Methode des E-Mail-Dienstes aufgerufen wurde
-        verify(emailServiceMock, times(1)).sendEmail(eq("organizer@mail.com"), eq("Buchung für Konzert bestätigt"),
-                eq("Es wurden 20 Plätze für die Veranstaltung Konzert reserviert."));
+        if (shouldSendEmail) {
+            verify(emailServiceMock, times(1)).sendEmail(eq("organizer@mail.com"), eq("Buchung für Konzert bestätigt"),
+                    eq("Es wurden " + reservation.reservedSeats() + " Plätze für die Veranstaltung Konzert reserviert."));
+        } else {
+            verify(emailServiceMock, never()).sendEmail(anyString(), anyString(), anyString());
+        }
     }
 
-    @Test
-    void noEmailSentWhenLessThan10PercentOfSeatsReserved() {
-        // Angenommen, die Veranstaltung hat 100 Plätze und wir reservieren nur 5 Plätze (weniger als 10%)
+    private static Stream<Arguments> provideReservationsForEmailSending() {
         Event event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
-
-        // Erstellung der Reservierung
         Customer customer = new Customer("Max Mustermann", "Musterstraße 1");
-        Reservation reservation = new Reservation(UUID.randomUUID(), event, customer, 5);
 
-        // Führen der Methode aus, die die E-Mail versendet
-        reservationService.addReservation(reservation);
+        Reservation reservationAboveThreshold = new Reservation(UUID.randomUUID(), event, customer, 20); // 20% reserved
+        Reservation reservationBelowThreshold = new Reservation(UUID.randomUUID(), event, customer, 5); // 5% reserved
 
-        // Überprüfen, dass keine E-Mail versendet wird, weil die Reservierung weniger als 10% der Plätze ausmacht
-        verify(emailServiceMock, never()).sendEmail(anyString(), anyString(), anyString());
+        return Stream.of(
+                Arguments.of(event, customer, reservationAboveThreshold, true),
+                Arguments.of(event, customer, reservationBelowThreshold, false)
+        );
     }
 
     @Test

@@ -1,49 +1,44 @@
 package de.hsh.dto;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Date;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class EventTest {
 
-    @Test
-    public void totalSeats() {
-        int expectedSeats = 50;
-        Event event = new Event(UUID.randomUUID(), "Test Event", new Date(), 100.0, expectedSeats, "organizer@mail.com");
-
-        assertEquals(expectedSeats, event.totalSeats(), "Die verfügbaren Plätze sollten korrekt zurückgegeben werden.");
+    @ParameterizedTest
+    @DisplayName("Test für totalSeats und Preisvalidierung")
+    @MethodSource("provideTestCases")
+    void testEventProperties(int seats, double price, Integer expectedSeats, String expectedMessage) {
+        if (expectedSeats != null) {
+            // Test für totalSeats
+            Event event = new Event(UUID.randomUUID(), "Test Event", new Date(), price, seats, "organizer@mail.com");
+            assertEquals(expectedSeats, event.totalSeats(), "Die verfügbaren Plätze sollten korrekt zurückgegeben werden.");
+        } else if (expectedMessage != null) {
+            // Test für ungültige Werte
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Event(UUID.randomUUID(), "Test Event", new Date(), price, seats, "organizer@mail.com"));
+            assertEquals(expectedMessage, exception.getMessage());
+        }
     }
 
-    @Test
-    public void totalSeatsWithDifferentValues() {
-        Event event1 = new Event(UUID.randomUUID(), "Event 1", new Date(), 100.0, 30, "organizer@mail.com");
-        Event event2 = new Event(UUID.randomUUID(), "Event 2", new Date(), 120.0, 75, "organizer@mail.com");
-
-        assertEquals(30, event1.totalSeats(), "Das erste Event sollte 30 verfügbare Plätze haben.");
-        assertEquals(75, event2.totalSeats(), "Das zweite Event sollte 75 verfügbare Plätze haben.");
-    }
-
-    @Test
-    public void totalSeatsZero() {
-        Event event = new Event(UUID.randomUUID(), "Event No Seats", new Date(), 50.0, 0, "organizer@mail.com");
-
-        assertEquals(0, event.totalSeats(), "Das Event sollte 0 verfügbare Plätze haben.");
-    }
-
-
-    @Test
-    public void totalSeatsCannotBeNegative() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Event(UUID.randomUUID(), "Test Event", new Date(), 100.0, -5, "organizer@mail.com"));
-        assertEquals("Die verfügbaren Plätze dürfen nicht negativ sein.", exception.getMessage());
-    }
-
-    @Test
-    public void priceCannotBeNegative() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> new Event(UUID.randomUUID(), "Test Event", new Date(), -10.0, 50, "organizer@mail.com"));
-        assertEquals("Der Preis darf nicht negativ sein.", exception.getMessage());
+    static Stream<Arguments> provideTestCases() {
+        return Stream.of(
+                // Test totalSeats mit validen Werten
+                Arguments.of(50, 100.0, 50, null),
+                Arguments.of(30, 100.0, 30, null),
+                Arguments.of(75, 120.0, 75, null),
+                Arguments.of(0, 50.0, 0, null),
+                // Test für ungültige Werte
+                Arguments.of(-5, 100.0, null, "Die verfügbaren Plätze dürfen nicht negativ sein."),
+                Arguments.of(50, -10.0, null, "Der Preis darf nicht negativ sein.")
+        );
     }
 
 }

@@ -1,3 +1,6 @@
+# Erkenntnisse
+- Durch den TDD-Ansatz haben wir anfangs für jeden Test den wir geschrieben haben eine separate Funktion erstellt. Wurde sehr schnell sehr unübersichtlich. Durch Refactoring der Test-Klassen und nutzen der @Parameterized-Annotation konnten die Tests sehr viel übersichtlicher gestaltet werden.
+
 # 1 TDD-Projekt
 
 Sie erinnern sich hoffentlich an die von Ihnen bereits mehrfach durchdachten Anforderungen

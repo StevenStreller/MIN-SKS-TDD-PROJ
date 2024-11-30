@@ -48,7 +48,7 @@ Services:
 - [x] Das System soll zu einer Veranstaltung die noch verfügbaren Sitzplätze zeigen.
 - [x] Das System soll alle Kunden auflisten können.
 - [ ] Das System soll zu einem Kunden eine Buchung anlegen können. 
-- [ ] Das System soll mehrere Buchungen desselben Kunden zur selben Veranstaltung
+- [x] Das System soll mehrere Buchungen desselben Kunden zur selben Veranstaltung
   zu einer Buchung zusammenfassen. Der Identifikator der neueren Buchung wird
   dabei übernommen.
 - [x] Das System soll zu einem Kunden und einer Veranstaltung die zugehörige Buchung

@@ -5,6 +5,7 @@ import de.hsh.dto.Event;
 import de.hsh.dto.Reservation;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -58,10 +59,64 @@ class ReservationServiceTest {
         customer2 = new Customer("Anna Müller", "Beispielstraße 2");
         event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
         reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+
+    }
+
+
+    @Test
+    @DisplayName("Test: Merging multiple reservations with same customer and event")
+    void mergeMultipleReservations() {
+
+        Reservation firstReservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+        Reservation secondReservation = new Reservation(UUID.randomUUID(), event, customer1, 15);
+        Reservation thirdReservation = new Reservation(UUID.randomUUID(), event, customer1, 5);
+
+
+        reservationService.addReservation(firstReservation);
+        reservationService.addReservation(secondReservation);
+        reservationService.addReservation(thirdReservation);
+
+
+        assertEquals(1, reservationService.getReservations().size(), "Es sollte nur eine zusammengeführte Buchung vorhanden sein.");
+        assertEquals(30, reservationService.getReservations().getFirst().reservedSeats(), "Die reservierten Plätze sollten korrekt summiert werden.");
+        assertEquals(thirdReservation.uuid(), reservationService.getReservations().getFirst().uuid(), "Die ID der neuesten Buchung sollte übernommen werden.");
     }
 
     @Test
-    void testEmailSentWhenMoreThan10PercentOfSeatsReserved() {
+    @DisplayName("Überschreitung der Gesamtzahl der Sitzplätze führt zu einer IllegalArgumentException")
+    void exceedingTotalSeatsThrowsException() {
+        // Arrange
+        Reservation firstReservation = new Reservation(UUID.randomUUID(), event, customer1, 90);
+        Reservation secondReservation = new Reservation(UUID.randomUUID(), event, customer1, 15);
+
+        // Act
+        reservationService.addReservation(firstReservation);
+
+        // Assert
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> reservationService.addReservation(secondReservation), "Eine Ausnahme sollte geworfen werden, wenn die reservierten Plätze die Gesamtanzahl übersteigen.");
+        assertEquals("Die Gesamtzahl der reservierten Plätze überschreitet die verfügbaren Plätze.", exception.getMessage(), "Die Fehlermeldung sollte korrekt sein.");
+    }
+
+
+    @Test
+    @DisplayName("Test: Customer with same name but different events should not merge reservations")
+    void differentEventDoesNotMergeReservations() {
+        // Arrange
+        Event differentEvent = new Event(UUID.randomUUID(), "Oper", new java.util.Date(), 50.0, 100, "organizer2@mail.com");
+        Reservation firstReservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+        Reservation secondReservation = new Reservation(UUID.randomUUID(), differentEvent, customer1, 15);
+
+        // Act
+        reservationService.addReservation(firstReservation);
+        reservationService.addReservation(secondReservation);
+
+        // Assert
+        assertEquals(2, reservationService.getReservations().size(), "Es sollten zwei separate Buchungen vorhanden sein.");
+    }
+
+
+    @Test
+    void emailSentWhenMoreThan10PercentOfSeatsReserved() {
         // Angenommen, die Veranstaltung hat 100 Plätze und wir reservieren 20 Plätze
         Event event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
         event = new Event(event.identifier(), event.title(), event.date(), event.price(), event.totalSeats(), "organizer@mail.com");
@@ -80,7 +135,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void testNoEmailSentWhenLessThan10PercentOfSeatsReserved() {
+    void noEmailSentWhenLessThan10PercentOfSeatsReserved() {
         // Angenommen, die Veranstaltung hat 100 Plätze und wir reservieren nur 5 Plätze (weniger als 10%)
         Event event = new Event(UUID.randomUUID(), "Konzert", new java.util.Date(), 50.0, 100, "organizer@mail.com");
 
@@ -96,7 +151,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void testAddReservationWithBlacklistedCustomer() {
+    void addReservationWithBlacklistedCustomer() {
         // Setze das Verhalten des Mock-Blacklist-Dienstes
         when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(true);
 
@@ -112,14 +167,14 @@ class ReservationServiceTest {
     }
 
     @Test
-    void getAvailableSeatsNoReservations() {
+    void availableSeatsNoReservations() {
         // Keine Reservierungen, daher sollte die Anzahl der verfügbaren Plätze 100 sein
         int availableSeats = reservationService.getAvailableSeats(event);
         assertEquals(100, availableSeats, "Die verfügbaren Plätze sollten 100 sein, wenn keine Reservierungen existieren.");
     }
 
     @Test
-    void getAvailableSeatsWithReservations() {
+    void availableSeatsWithReservations() {
         // Füge einige Reservierungen hinzu
         reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer1, 30));
         reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer2, 21));
@@ -130,7 +185,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void getAvailableSeatsNoExcessReservations() {
+    void availableSeatsNoExcessReservations() {
         // Füge Reservierungen hinzu, die die Gesamtzahl der Plätze nicht überschreiten
         reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer1, 40));
         reservationService.addReservation(new Reservation(UUID.randomUUID(), event, customer2, 40));
@@ -142,7 +197,7 @@ class ReservationServiceTest {
 
 
     @Test
-    void addAndGetReservation() {
+    void andGetReservation() {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
 
         reservationService.addReservation(reservation);
@@ -154,7 +209,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void addReservationFailsWhenTooManySeatsReserved() {
+    void reservationFailsWhenTooManySeatsReserved() {
         // Erste Reservierung: 50 Plätze
         Reservation reservation1 = new Reservation(UUID.randomUUID(), event, customer1, 50);
         reservationService.addReservation(reservation1);
@@ -169,7 +224,7 @@ class ReservationServiceTest {
 
 
     @Test
-    void getReservationNotFound() {
+    void reservationNotFound() {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
         reservationService.addReservation(reservation);
 

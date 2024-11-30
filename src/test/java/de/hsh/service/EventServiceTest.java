@@ -1,6 +1,7 @@
 package de.hsh.service;
 
 import de.hsh.dto.Event;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,28 @@ class EventServiceTest {
         eventService = new EventService();
         event1 = new Event(UUID.randomUUID(), "Konzert 1", new Date(), 50.0, 100, "organizer@mail.com");
         event2 = new Event(UUID.randomUUID(), "Konzert 2", new Date(), 60.0, 150, "organizer@mail.com");
+    }
+
+    @AfterAll
+    static void tearDown() {
+        String[] testFiles = {
+                "empty_events.ser",
+                "single_event.ser",
+                "non_existent_file.ser",
+                "corrupted_events.ser",
+                "new_event.ser"
+        };
+
+        for (String filename : testFiles) {
+            File file = new File(filename);
+            if (file.exists()) {
+                if (file.delete()) {
+                    System.out.println("Datei entfernt: " + filename);
+                } else {
+                    System.out.println("Fehler beim Löschen der Datei: " + filename);
+                }
+            }
+        }
     }
 
     @Test

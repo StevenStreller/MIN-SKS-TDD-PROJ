@@ -1,6 +1,7 @@
 package de.hsh.service;
 
 import de.hsh.dto.Customer;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,6 +23,28 @@ class CustomerServiceTest {
         customerService = new CustomerService();
         customer1 = new Customer("John Doe", "1234 Elm Street");
         customer2 = new Customer("Jane Doe", "5678 Oak Avenue");
+    }
+
+    @AfterAll
+    static void tearDown() {
+        String[] testFiles = {
+                "empty_customers.ser",
+                "single_customer.ser",
+                "non_existent_file.ser",
+                "corrupted_customers.ser",
+                "new_customer.ser"
+        };
+
+        for (String filename : testFiles) {
+            File file = new File(filename);
+            if (file.exists()) {
+                if (file.delete()) {
+                    System.out.println("Datei entfernt: " + filename);
+                } else {
+                    System.out.println("Fehler beim Löschen der Datei: " + filename);
+                }
+            }
+        }
     }
 
     @Test

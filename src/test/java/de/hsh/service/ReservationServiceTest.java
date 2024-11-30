@@ -3,6 +3,7 @@ package de.hsh.service;
 import de.hsh.dto.Customer;
 import de.hsh.dto.Event;
 import de.hsh.dto.Reservation;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,29 @@ class ReservationServiceTest {
     private Customer customer2;
     private Event event;
     private Reservation reservation;
+
+    @AfterAll
+    static void tearDown() {
+        String[] testFiles = {
+                "reservations.ser",
+                "empty_reservations.ser",
+                "single_reservation.ser",
+                "non_existent_file.ser",
+                "corrupted_reservations.ser",
+                "new_reservation.ser"
+        };
+
+        for (String filename : testFiles) {
+            File file = new File(filename);
+            if (file.exists()) {
+                if (file.delete()) {
+                    System.out.println("Datei entfernt: " + filename);
+                } else {
+                    System.out.println("Fehler beim Löschen der Datei: " + filename);
+                }
+            }
+        }
+    }
 
     @BeforeEach
     void setUp() {

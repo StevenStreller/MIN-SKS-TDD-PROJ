@@ -92,23 +92,40 @@ Beim Demonstrationstermin haben Sie zunächst 15 Minuten Zeit, Ihre Realisierung
 präsentieren. Sie benötigen keine besonderen Präsentationsmedien. Führen Sie mich bitte
 durch Ihren Quelltext hindurch. Die folgenden Aspekte sollen Sie im Rahmen Ihrer
 Präsentation von sich aus ansprechen und direkt am Quelltext aufzeigen:
-a) Wo steht der Testcode, der zur Entwicklung der Domänenklasse Kunde, Veranstaltung,
-Buchung führte?
-b) Wo steht der Testcode, der zur Entwicklung einer Methode zur Erzeugung einer
-Buchung führte.
+
+a) Wo steht der Testcode, der zur Entwicklung der Domänenklasse Kunde, Veranstaltung, Buchung führte?
+  - [dto](src/test/java/de/hsh/dto)
+
+b) Wo steht der Testcode, der zur Entwicklung einer Methode zur Erzeugung einer Buchung führte.
+  - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `addReservationWithNonBlacklistedCustomer()`
+
 c) Wo steht der Testcode, der den Sonderfall "gleicher Kunde, gleiche Veranstaltung,
 zusätzliche Buchung" testet? Wo steht der daraus entstandene Code der Anwendung?
+  - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `mergeMultipleReservations()`
+  - [ReservationService.java](src/main/java/de/hsh/service/ReservationService.java) in `mergeReservation(Reservation reservation)`
+
 d) Wo steht der Testcode, der die Auflistung aller Kunden testet?
-e) Wo steht der Testcode, der zu einem Kunden und einer Veranstaltung die zugehörige
-Buchung anfordert?
+  - [CustomerServiceTest.java](src/test/java/de/hsh/service/CustomerServiceTest.java) in `customersListIsEmptyInitially()`und `addCustomer()`
+
+e) Wo steht der Testcode, der zu einem Kunden und einer Veranstaltung die zugehörige Buchung anfordert?
+  - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `getReservation()`
+
 f) Wo steht der Testcode, der das Zurückweisen einer überbuchten Veranstaltung testet?
+  - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `exceedingTotalSeatsThrowsException()`
+
 g) Wo steht der Testcode, der die Persistierung testet?
-h) Wo steht der Testcode, der die Blacklist-Funktion testet (hier sind zwei Fälle interessant:
-Kunde ist/ist nicht auf der Blacklist)?
+  - [service](src/test/java/de/hsh/service)
+
+h) Wo steht der Testcode, der die Blacklist-Funktion testet (hier sind zwei Fälle interessant Kunde ist/ist nicht auf der Blacklist)?
+  - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `addReservationWithBlacklistedCustomer()` und `addReservationWithNonBlacklistedCustomer()`
+
 i) Wo steht der Testcode, der die E-Mail-Funktion testet (hier sind zwei Fälle interessant:
 Sitzplätze >= 10% und Sitzplätze < 10%)?
-j) Zeigen Sie den Abdeckungsreport und erläutern Sie, warum einzelne Passagen rot
-sind.
+  - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `testEmailSendingBasedOnSeatsReserved`
+
+j) Zeigen Sie den Abdeckungsreport und erläutern Sie, warum einzelne Passagen rot sind.
+  - [index.html](target/site/jacoco/index.html)
+
 
 In den verbleibenden 10 bis 15 Minuten werde ich Rückfragen stellen, ggf. Fragen Ihrerseits
 beantworten, und Sie bitten, eine neue Funktion testgetrieben in Ihre Anwendung einzubauen.

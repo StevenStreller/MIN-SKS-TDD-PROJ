@@ -163,6 +163,19 @@ class ReservationServiceTest {
     }
 
     @Test
+    void addReservationWithNonBlacklistedCustomer() {
+        // Setze das Verhalten des Mock-Blacklist-Dienstes
+        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
+
+        // Versuche, eine Buchung für einen non-blacklisted Kunden hinzuzufügen
+        Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
+
+        reservationService.addReservation(reservation);
+
+        assertEquals(1, reservationService.getReservations().size());
+    }
+
+    @Test
     void availableSeatsNoReservations() {
         // Keine Reservierungen, daher sollte die Anzahl der verfügbaren Plätze 100 sein
         int availableSeats = reservationService.getAvailableSeats(event);
@@ -193,7 +206,7 @@ class ReservationServiceTest {
 
 
     @Test
-    void andGetReservation() {
+    void getReservation() {
         Reservation reservation = new Reservation(UUID.randomUUID(), event, customer1, 10);
 
         reservationService.addReservation(reservation);

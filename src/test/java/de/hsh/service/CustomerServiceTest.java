@@ -84,19 +84,19 @@ class CustomerServiceTest {
 
     @Test
     void serializationAndDeserialization() {
-        // Add customers to the list
+        // Kunden zur Liste hinzufügen
         customerService.addCustomer(customer1);
         customerService.addCustomer(customer2);
 
-        // Serialize the customer list
+        // Serialisiere die Kundenliste
         String filename = "customers.ser";
         customerService.serializeCustomers(filename);
 
-        // Create a new CustomerService and deserialize the list
+        // Erstelle eine neuen CustomerService und deserialisiere die Liste
         CustomerService newCustomerService = new CustomerService();
         newCustomerService.deserializeCustomers(filename);
 
-        // Check that the deserialized list contains the same customers
+
         List<Customer> deserializedCustomers = newCustomerService.getCustomers();
         assertEquals(2, deserializedCustomers.size(), "Deserialized customer list should have the same size as the original list");
         assertTrue(deserializedCustomers.contains(customer1), "Customer 1 should be present in the deserialized list");
@@ -105,30 +105,31 @@ class CustomerServiceTest {
 
     @Test
     void serializationWithEmptyList() {
-        // Serialize an empty list
+        // Eine leere Liste serialisieren
         String filename = "empty_customers.ser";
         customerService.serializeCustomers(filename);
 
-        // Deserialize into a new service
+        // Deserialisieren in einen neuen Dienst
         CustomerService newCustomerService = new CustomerService();
         newCustomerService.deserializeCustomers(filename);
 
-        // Assert the list is still empty after deserialization
+        // Prüfen, ob die Liste nach der Deserialisierung noch leer ist
         assertTrue(newCustomerService.getCustomers().isEmpty(), "Deserialized customer list should be empty for an empty list");
     }
 
     @Test
     void serializationWithOneCustomer() {
-        // Add a single customer and serialize the list
+
+        // Hinzufügen eines einzelnen Kunden und serialisieren der Liste
         customerService.addCustomer(customer1);
         String filename = "single_customer.ser";
         customerService.serializeCustomers(filename);
 
-        // Create a new CustomerService and deserialize
+        // Einen neuen CustomerService erstellen und deserialisieren
         CustomerService newCustomerService = new CustomerService();
         newCustomerService.deserializeCustomers(filename);
 
-        // Assert the deserialized list contains one customer
+        // Bestätigen, dass die deserialisierte Liste einen Kunden enthält
         List<Customer> deserializedCustomers = newCustomerService.getCustomers();
         assertEquals(1, deserializedCustomers.size(), "Deserialized customer list should contain 1 customer");
         assertTrue(deserializedCustomers.contains(customer1), "Deserialized list should contain the customer");
@@ -148,11 +149,11 @@ class CustomerServiceTest {
         String filename = "corrupted_customers.ser";
         File file = new File(filename);
 
-        // Create a corrupted file
+        // Eine beschädigte Datei erstellen
         try {
             if (file.exists()) file.delete();
             file.createNewFile();
-            // Write some invalid content to the file (not a valid serialized object)
+
             try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
                 writer.write("Invalid data");
             }
@@ -170,16 +171,16 @@ class CustomerServiceTest {
     void serializationAndDeserializationWithDifferentCustomerData() {
         Customer newCustomer = new Customer("Alice Wonderland", "Avenue 42");
 
-        // Serialize the new customer
+        // Serialisieren den neuen Kunden
         String filename = "new_customer.ser";
         customerService.addCustomer(newCustomer);
         customerService.serializeCustomers(filename);
 
-        // Create a new CustomerService and deserialize
+        // Einen neuen CustomerService erstellen und deserialisieren
         CustomerService newCustomerService = new CustomerService();
         newCustomerService.deserializeCustomers(filename);
 
-        // Assert that the new customer is in the deserialized list
+        // Bestätigen, dass der neue Kunde in der deserialisierten Liste enthalten ist
         List<Customer> deserializedCustomers = newCustomerService.getCustomers();
         assertEquals(1, deserializedCustomers.size(), "Deserialized list should contain the new customer");
         assertTrue(deserializedCustomers.contains(newCustomer), "Deserialized list should contain Alice Wonderland");
@@ -187,7 +188,7 @@ class CustomerServiceTest {
 
     @Test
     void serializeCustomersThrowsRuntimeExceptionOnIOException() {
-        // Create a file that is not writable, e.g., a read-only file.
+        // Erstellen Sie eine Datei, die nicht beschreibbar ist, z. B. eine schreibgeschützte Datei.
         String filename = "customers.ser";
         File file = new File(filename);
 
@@ -195,7 +196,7 @@ class CustomerServiceTest {
             if (file.exists()) file.delete();
             file.createNewFile();
 
-            // Make the file read-only to simulate an IOException during serialization
+            // Die Datei schreibgeschützt machen, um eine IOException während der Serialisierung zu simulieren
             file.setReadOnly();
 
             RuntimeException exception = assertThrows(RuntimeException.class, () -> {
@@ -207,7 +208,7 @@ class CustomerServiceTest {
         } catch (IOException e) {
             fail("Failed to create or modify file: " + e.getMessage());
         } finally {
-            // Clean up: Make the file writable again and delete
+            // Aufräumen: Die Datei wieder beschreibbar machen und löschen
             file.setWritable(true);
             file.delete();
         }

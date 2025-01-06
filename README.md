@@ -96,6 +96,8 @@ Präsentation von sich aus ansprechen und direkt am Quelltext aufzeigen:
 a) Wo steht der Testcode, der zur Entwicklung der Domänenklasse Kunde, Veranstaltung, Buchung führte?
   - [dto](src/test/java/de/hsh/dto)
 
+![diagram.png](diagram.png)
+
 b) Wo steht der Testcode, der zur Entwicklung einer Methode zur Erzeugung einer Buchung führte.
   - [ReservationServiceTest.java](src/test/java/de/hsh/service/ReservationServiceTest.java) in `addReservationWithNonBlacklistedCustomer()`
 

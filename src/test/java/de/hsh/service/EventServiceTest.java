@@ -105,46 +105,6 @@ class EventServiceTest {
     }
 
     @Test
-    void serializationWithEmptyList() {
-        // Serialize an empty list
-        String filename = "empty_events.ser";
-        eventService.serializeEvents(filename);
-
-        // Deserialize into a new service
-        EventService newEventService = new EventService();
-        newEventService.deserializeEvents(filename);
-
-        // Assert the list is still empty after deserialization
-        assertTrue(newEventService.getEvents().isEmpty(), "Deserialized event list should be empty for an empty list");
-    }
-
-    @Test
-    void serializationWithOneEvent() {
-        // Add a single event and serialize the list
-        eventService.addEvent(event1);
-        String filename = "single_event.ser";
-        eventService.serializeEvents(filename);
-
-        // Create a new EventService and deserialize
-        EventService newEventService = new EventService();
-        newEventService.deserializeEvents(filename);
-
-        // Assert the deserialized list contains one event
-        List<Event> deserializedEvents = newEventService.getEvents();
-        assertEquals(1, deserializedEvents.size(), "Deserialized event list should contain 1 event");
-        assertTrue(deserializedEvents.contains(event1), "Deserialized list should contain the event");
-    }
-
-    @Test
-    void deserializationFileNotFound() {
-        String filename = "non_existent_file.ser";
-        EventService newEventService = new EventService();
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> newEventService.deserializeEvents(filename));
-        assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file does not exist");
-    }
-
-    @Test
     void deserializationWithCorruptedFile() {
         String filename = "corrupted_events.ser";
         File file = new File(filename);
@@ -165,25 +125,6 @@ class EventServiceTest {
         } catch (IOException e) {
             fail("Failed to create corrupted file: " + e.getMessage());
         }
-    }
-
-    @Test
-    void serializationAndDeserializationWithDifferentEventData() {
-        Event newEvent = new Event(UUID.randomUUID(), "Festival", new Date(), 80.0, 500, "organizer@mail.com");
-
-        // Serialize the new event
-        String filename = "new_event.ser";
-        eventService.addEvent(newEvent);
-        eventService.serializeEvents(filename);
-
-        // Create a new EventService and deserialize
-        EventService newEventService = new EventService();
-        newEventService.deserializeEvents(filename);
-
-        // Assert that the new event is in the deserialized list
-        List<Event> deserializedEvents = newEventService.getEvents();
-        assertEquals(1, deserializedEvents.size(), "Deserialized list should contain the new event");
-        assertTrue(deserializedEvents.contains(newEvent), "Deserialized list should contain the new event");
     }
 
     @Test

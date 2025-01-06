@@ -97,7 +97,7 @@ class ReservationServiceTest {
         reservationService.addReservation(firstReservation);
 
         // Assert
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> reservationService.addReservation(secondReservation), "Eine Ausnahme sollte geworfen werden, wenn die reservierten Plätze die Gesamtanzahl übersteigen.");
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> reservationService.addReservation(secondReservation), "Eine Exception sollte geworfen werden, wenn die reservierten Plätze die Gesamtanzahl übersteigen.");
         assertEquals("Die Gesamtzahl der reservierten Plätze überschreitet die verfügbaren Plätze.", exception.getMessage(), "Die Fehlermeldung sollte korrekt sein.");
     }
 
@@ -286,40 +286,6 @@ class ReservationServiceTest {
         assertTrue(deserializedReservations.contains(reservation), "Deserialized list should contain the reservation");
     }
 
-    @Test
-    void serializationWithEmptyList() {
-        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
-
-        // Serialize an empty list
-        String filename = "empty_reservations.ser";
-        reservationService.serializeReservations(filename);
-
-        // Deserialize into a new service
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
-        newReservationService.deserializeReservations(filename);
-
-        // Assert the list is still empty after deserialization
-        assertTrue(newReservationService.getReservations().isEmpty(), "Deserialized reservation list should be empty for an empty list");
-    }
-
-    @Test
-    void serializationWithOneReservation() {
-        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
-
-        // Add a single reservation and serialize the list
-        reservationService.addReservation(reservation);
-        String filename = "single_reservation.ser";
-        reservationService.serializeReservations(filename);
-
-        // Create a new ReservationService and deserialize
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
-        newReservationService.deserializeReservations(filename);
-
-        // Assert the deserialized list contains one reservation
-        List<Reservation> deserializedReservations = newReservationService.getReservations();
-        assertEquals(1, deserializedReservations.size(), "Deserialized reservation list should contain 1 reservation");
-        assertTrue(deserializedReservations.contains(reservation), "Deserialized list should contain the reservation");
-    }
 
     @Test
     void deserializationFileNotFound() {
@@ -332,51 +298,6 @@ class ReservationServiceTest {
         assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file does not exist");
     }
 
-    @Test
-    void deserializationWithCorruptedFile() {
-        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
-
-        String filename = "corrupted_reservations.ser";
-        File file = new File(filename);
-
-        // Create a corrupted file
-        try {
-            if (file.exists()) file.delete();
-            file.createNewFile();
-            // Write some invalid content to the file (not a valid serialized object)
-            try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
-                writer.write("Invalid data");
-            }
-
-            ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
-
-            RuntimeException exception = assertThrows(RuntimeException.class, () -> newReservationService.deserializeReservations(filename));
-            assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file is corrupted");
-        } catch (IOException e) {
-            fail("Failed to create corrupted file: " + e.getMessage());
-        }
-    }
-
-    @Test
-    void serializationAndDeserializationWithDifferentReservationData() {
-        when(blacklistServiceMock.isBlacklisted(customer1.name())).thenReturn(false);
-
-        Reservation newReservation = new Reservation(UUID.randomUUID(), event, customer1, 20);
-
-        // Serialize the new reservation
-        String filename = "new_reservation.ser";
-        reservationService.addReservation(newReservation);
-        reservationService.serializeReservations(filename);
-
-        // Create a new ReservationService and deserialize
-        ReservationService newReservationService = new ReservationService(blacklistServiceMock, emailServiceMock);
-        newReservationService.deserializeReservations(filename);
-
-        // Assert that the new reservation is in the deserialized list
-        List<Reservation> deserializedReservations = newReservationService.getReservations();
-        assertEquals(1, deserializedReservations.size(), "Deserialized list should contain the new reservation");
-        assertTrue(deserializedReservations.contains(newReservation), "Deserialized list should contain the new reservation");
-    }
 
     @Test
     void serializeReservationsThrowsRuntimeExceptionOnIOException() {

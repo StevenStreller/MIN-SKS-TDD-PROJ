@@ -57,9 +57,6 @@ public class ReservationService {
     }
 
 
-
-
-
     private void checkIfCustomerShouldGetAnEmail(Reservation reservation) {
         if (reservation.reservedSeats() >= (reservation.event().totalSeats() * 0.1)) {
             String email = reservation.event().organizerEmail();

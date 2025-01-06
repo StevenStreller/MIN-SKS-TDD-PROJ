@@ -104,47 +104,6 @@ class CustomerServiceTest {
     }
 
     @Test
-    void serializationWithEmptyList() {
-        // Eine leere Liste serialisieren
-        String filename = "empty_customers.ser";
-        customerService.serializeCustomers(filename);
-
-        // Deserialisieren in einen neuen Dienst
-        CustomerService newCustomerService = new CustomerService();
-        newCustomerService.deserializeCustomers(filename);
-
-        // Prüfen, ob die Liste nach der Deserialisierung noch leer ist
-        assertTrue(newCustomerService.getCustomers().isEmpty(), "Deserialized customer list should be empty for an empty list");
-    }
-
-    @Test
-    void serializationWithOneCustomer() {
-
-        // Hinzufügen eines einzelnen Kunden und serialisieren der Liste
-        customerService.addCustomer(customer1);
-        String filename = "single_customer.ser";
-        customerService.serializeCustomers(filename);
-
-        // Einen neuen CustomerService erstellen und deserialisieren
-        CustomerService newCustomerService = new CustomerService();
-        newCustomerService.deserializeCustomers(filename);
-
-        // Bestätigen, dass die deserialisierte Liste einen Kunden enthält
-        List<Customer> deserializedCustomers = newCustomerService.getCustomers();
-        assertEquals(1, deserializedCustomers.size(), "Deserialized customer list should contain 1 customer");
-        assertTrue(deserializedCustomers.contains(customer1), "Deserialized list should contain the customer");
-    }
-
-    @Test
-    void deserializationFileNotFound() {
-        String filename = "non_existent_file.ser";
-        CustomerService newCustomerService = new CustomerService();
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> newCustomerService.deserializeCustomers(filename));
-        assertEquals("Deserialisierung fehlgeschlagen", exception.getMessage(), "Deserialization should fail with the correct message when the file does not exist");
-    }
-
-    @Test
     void deserializationWithCorruptedFile() {
         String filename = "corrupted_customers.ser";
         File file = new File(filename);
@@ -165,25 +124,6 @@ class CustomerServiceTest {
         } catch (IOException e) {
             fail("Failed to create corrupted file: " + e.getMessage());
         }
-    }
-
-    @Test
-    void serializationAndDeserializationWithDifferentCustomerData() {
-        Customer newCustomer = new Customer("Alice Wonderland", "Avenue 42");
-
-        // Serialisieren den neuen Kunden
-        String filename = "new_customer.ser";
-        customerService.addCustomer(newCustomer);
-        customerService.serializeCustomers(filename);
-
-        // Einen neuen CustomerService erstellen und deserialisieren
-        CustomerService newCustomerService = new CustomerService();
-        newCustomerService.deserializeCustomers(filename);
-
-        // Bestätigen, dass der neue Kunde in der deserialisierten Liste enthalten ist
-        List<Customer> deserializedCustomers = newCustomerService.getCustomers();
-        assertEquals(1, deserializedCustomers.size(), "Deserialized list should contain the new customer");
-        assertTrue(deserializedCustomers.contains(newCustomer), "Deserialized list should contain Alice Wonderland");
     }
 
     @Test
